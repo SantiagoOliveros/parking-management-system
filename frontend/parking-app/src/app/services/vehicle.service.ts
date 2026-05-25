@@ -24,4 +24,10 @@ export class VehicleService {
   registerExit(plate: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/exit/${plate}`, {});
   }
+
+  getDashboardStats() {
+    return this.http.get(
+      `${this.apiUrl}/dashboard-stats`
+    );
+  }
 }

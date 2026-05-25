@@ -1,40 +1,116 @@
-<h1>Dashboard</h1>
+<div class="dashboard-header">
 
-<div class="dashboard-grid">
+  <h1>Dashboard</h1>
 
-  <mat-card>
+  <p>
+    Parking management overview and real-time statistics
+  </p>
 
-    <mat-card-title>
-      Vehicle Entries
-    </mat-card-title>
+</div>
 
-    <mat-card-content>
-      Register incoming vehicles.
-    </mat-card-content>
+<div class="stats-grid">
+
+  <!-- Total Active -->
+
+  <mat-card class="stats-card">
+
+    <div class="card-content">
+
+      <div>
+
+        <h2>
+          {{ stats.totalActiveVehicles }}
+        </h2>
+
+        <p>
+          Active Vehicles
+        </p>
+
+      </div>
+
+      <mat-icon>
+        directions_car
+      </mat-icon>
+
+    </div>
 
   </mat-card>
 
-  <mat-card>
+  <!-- Cars -->
 
-    <mat-card-title>
-      Active Vehicles
-    </mat-card-title>
+  <mat-card class="stats-card">
 
-    <mat-card-content>
-      View vehicles currently parked.
-    </mat-card-content>
+    <div class="card-content">
+
+      <div>
+
+        <h2>
+          {{ stats.totalCars }}
+        </h2>
+
+        <p>
+          Cars
+        </p>
+
+      </div>
+
+      <mat-icon>
+        local_taxi
+      </mat-icon>
+
+    </div>
 
   </mat-card>
 
-  <mat-card>
+  <!-- Motorcycles -->
 
-    <mat-card-title>
-      Vehicle Exits
-    </mat-card-title>
+  <mat-card class="stats-card">
 
-    <mat-card-content>
-      Register vehicle exits and payments.
-    </mat-card-content>
+    <div class="card-content">
+
+      <div>
+
+        <h2>
+          {{ stats.totalMotorcycles }}
+        </h2>
+
+        <p>
+          Motorcycles
+        </p>
+
+      </div>
+
+      <mat-icon>
+        two_wheeler
+      </mat-icon>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Revenue -->
+
+  <mat-card class="stats-card revenue-card">
+
+    <div class="card-content">
+
+      <div>
+
+        <h2>
+          ${{ stats.estimatedRevenue }}
+        </h2>
+
+        <p>
+          Estimated Revenue
+        </p>
+
+      </div>
+
+      <mat-icon>
+        attach_money
+      </mat-icon>
+
+    </div>
 
   </mat-card>
 

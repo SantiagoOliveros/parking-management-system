@@ -38,4 +38,13 @@ public class VehiclesController : ControllerBase
 
         return Ok(result);
     }
+
+    [HttpGet("dashboard-stats")]
+    public async Task<IActionResult> GetDashboardStats()
+    {
+        var result = await _vehicleService
+            .GetDashboardStatsAsync();
+
+        return Ok(result);
+}
 }

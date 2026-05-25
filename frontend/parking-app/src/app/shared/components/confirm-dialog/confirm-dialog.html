@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>
+  Confirm Exit
+</h2>
+
+<div mat-dialog-content>
+
+  Are you sure you want to register exit for vehicle:
+
+  <strong>{{ data.plate }}</strong>?
+
+</div>
+
+<div mat-dialog-actions align="end">
+
+  <button
+    mat-button
+    mat-dialog-close>
+
+    Cancel
+
+  </button>
+
+  <button
+    mat-raised-button
+    color="primary"
+    [mat-dialog-close]="true">
+
+    Confirm
+
+  </button>
+
+</div>

@@ -1,10 +1,11 @@
 import {
   Component,
   OnInit,
-  inject
+  inject,
+  ChangeDetectorRef
 } from '@angular/core';
 
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 import { VehicleService } from '../../../../services/vehicle.service';
 
@@ -12,9 +13,22 @@ import { MatTableModule } from '@angular/material/table';
 
 import { MatButtonModule } from '@angular/material/button';
 
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
 import { MatChipsModule } from '@angular/material/chips';
+
+import {
+  MatDialog,
+  MatDialogModule
+} from '@angular/material/dialog';
+
+import { ConfirmDialogComponent }
+from '../../../../shared/components/confirm-dialog/confirm-dialog';
+
+import {
+  MatSnackBar,
+  MatSnackBarModule
+} from '@angular/material/snack-bar';
+
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-active-vehicles',
@@ -23,9 +37,9 @@ import { MatChipsModule } from '@angular/material/chips';
     CommonModule,
     MatTableModule,
     MatButtonModule,
-    MatProgressSpinnerModule,
     MatChipsModule,
-    DatePipe
+    MatDialogModule,
+    MatSnackBarModule
   ],
   templateUrl: './active-vehicles.html',
   styleUrls: ['./active-vehicles.scss']
@@ -34,9 +48,13 @@ export class ActiveVehicles implements OnInit {
 
   private vehicleService = inject(VehicleService);
 
-  vehicles: any[] = [];
+  private dialog = inject(MatDialog);
 
-  loading = true;
+  private snackBar = inject(MatSnackBar);
+
+  private cdr = inject(ChangeDetectorRef);
+
+  vehicles: any[] = [];
 
   displayedColumns: string[] = [
     'plate',
@@ -51,45 +69,79 @@ export class ActiveVehicles implements OnInit {
 
   loadVehicles(): void {
 
-    this.loading = true;
-
     this.vehicleService
       .getActiveVehicles()
       .subscribe({
+
         next: (response: any) => {
 
-          this.vehicles = response;
+          this.vehicles = [...(response || [])];
 
-          this.loading = false;
+          this.cdr.detectChanges();
         },
 
         error: (err) => {
 
           console.error(err);
 
-          this.loading = false;
+          this.snackBar.open(
+            'Failed to load vehicles',
+            'Close',
+            {
+              duration: 4000
+            }
+          );
         }
       });
   }
 
   registerExit(plate: string): void {
 
-    this.loading = true;
+    const dialogRef = this.dialog.open(
+      ConfirmDialogComponent,
+      {
+        width: '400px',
+        data: { plate }
+      }
+    );
 
-    this.vehicleService
-      .registerExit(plate)
-      .subscribe({
-        next: () => {
+    dialogRef.afterClosed()
+      .subscribe(result => {
 
-          this.loadVehicles();
-        },
+        if (!result) return;
 
-        error: (err) => {
+        this.vehicleService
+          .registerExit(plate)
+          .subscribe({
 
-          console.error(err);
+            next: () => {
 
-          this.loading = false;
-        }
+              this.snackBar.open(
+                'Vehicle exit registered successfully',
+                'Close',
+                {
+                  duration: 3000
+                }
+              );
+
+              this.loadVehicles();
+            },
+
+            error: (err) => {
+
+              console.error(err);
+
+
+              this.snackBar.open(
+                err?.error?.message ||
+                'Vehicle exit failed',
+                'Close',
+                {
+                  duration: 4000
+                }
+              );
+            }
+          });
       });
   }
 }

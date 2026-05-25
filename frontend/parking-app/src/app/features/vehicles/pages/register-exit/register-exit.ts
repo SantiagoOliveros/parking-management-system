@@ -1,19 +1,48 @@
 import { Component, inject } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
+
 import {
   FormBuilder,
   ReactiveFormsModule,
-  Validators
+  Validators,
 } from '@angular/forms';
 
 import { VehicleService } from '../../../../services/vehicle.service';
+
+import {
+  MatDialog,
+  MatDialogModule,
+} from '@angular/material/dialog';
+
+import {
+  MatSnackBar,
+  MatSnackBarModule
+} from '@angular/material/snack-bar';
+
+import { MatCardModule } from '@angular/material/card';
+
+import { MatFormFieldModule } from '@angular/material/form-field';
+
+import { MatInputModule } from '@angular/material/input';
+
+import { MatButtonModule } from '@angular/material/button';
+
+import { ExitSummaryDialogComponent }
+from '../../../../shared/components/exit-summary-dialog/exit-summary-dialog';
 
 @Component({
   selector: 'app-register-exit',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
   ],
   templateUrl: './register-exit.html',
   styleUrls: ['./register-exit.scss']
@@ -24,11 +53,11 @@ export class RegisterExit {
 
   private vehicleService = inject(VehicleService);
 
+  private dialog = inject(MatDialog);
+
+  private snackBar = inject(MatSnackBar);
+
   loading = false;
-
-  errorMessage = '';
-
-  exitResult: any = null;
 
   form = this.fb.group({
     plate: ['', [
@@ -43,17 +72,29 @@ export class RegisterExit {
 
     this.loading = true;
 
-    this.errorMessage = '';
-
-    this.exitResult = null;
-
     const plate = this.form.value.plate!;
 
-    this.vehicleService.registerExit(plate)
+    this.vehicleService
+      .registerExit(plate)
       .subscribe({
+
         next: (response) => {
 
-          this.exitResult = response;
+          this.dialog.open(
+            ExitSummaryDialogComponent,
+            {
+              data: response,
+              width: '450px'
+            }
+          );
+
+          this.snackBar.open(
+            'Vehicle exit registered successfully',
+            'Close',
+            {
+              duration: 3000
+            }
+          );
 
           this.loading = false;
 
@@ -62,9 +103,14 @@ export class RegisterExit {
 
         error: (err) => {
 
-          this.errorMessage =
+          this.snackBar.open(
             err?.error?.message ||
-            'Vehicle exit failed';
+            'Vehicle exit failed',
+            'Close',
+            {
+              duration: 4000
+            }
+          );
 
           this.loading = false;
         }

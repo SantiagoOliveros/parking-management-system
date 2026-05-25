@@ -1,0 +1,38 @@
+<h2>Vehicle Exit Summary</h2>
+
+<div class="summary-container">
+
+  <div>
+    <strong>Plate:</strong>
+    {{ data.plate }}
+  </div>
+
+  <div>
+    <strong>Vehicle Type:</strong>
+    {{ data.vehicleType }}
+  </div>
+
+  <div>
+    <strong>Entry Time:</strong>
+    {{ data.entryTime | date:'medium' }}
+  </div>
+
+  <div>
+    <strong>Exit Time:</strong>
+    {{ data.exitTime | date:'medium' }}
+  </div>
+
+  <div>
+    <strong>Total Minutes:</strong>
+    {{ data.totalMinutes }}
+  </div>
+
+  <div class="total">
+
+    <strong>Total Amount:</strong>
+
+    ${{ data.totalAmount }}
+
+  </div>
+
+</div>

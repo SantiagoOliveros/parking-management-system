@@ -5,6 +5,7 @@ using ParkingApp.Domain.Common;
 using ParkingApp.Domain.Entities;
 using ParkingApp.Domain.Enums;
 using ParkingApp.Infrastructure.Persistence;
+using ParkingApp.Application.DTOs.Dashboard;
 
 namespace ParkingApp.Infrastructure.Services;
 
@@ -120,5 +121,33 @@ public class VehicleService : IVehicleService
         }
 
         return response;
+    }
+
+    public async Task<DashboardStatsResponse> GetDashboardStatsAsync()
+    {
+        var activeVehicles = await _context.VehicleRecords
+            .Where(x => x.Status == VehicleStatus.Active)
+            .ToListAsync();
+
+        var totalCars = activeVehicles
+            .Count(x => x.VehicleType == VehicleType.Car);
+
+        var totalMotorcycles = activeVehicles
+            .Count(x => x.VehicleType == VehicleType.Motorcycle);
+
+        var estimatedRevenue = activeVehicles
+            .Sum(x =>
+                (decimal)Math.Ceiling(
+                    (DateTime.UtcNow - x.EntryTime).TotalMinutes
+                ) * PRICE_PER_MINUTE
+            );
+
+        return new DashboardStatsResponse
+        {
+            TotalActiveVehicles = activeVehicles.Count,
+            TotalCars = totalCars,
+            TotalMotorcycles = totalMotorcycles,
+            EstimatedRevenue = estimatedRevenue
+        };
     }
 }
