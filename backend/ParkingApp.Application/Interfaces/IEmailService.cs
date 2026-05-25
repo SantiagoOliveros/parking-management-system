@@ -4,5 +4,6 @@ namespace ParkingApp.Application.Interfaces;
 
 public interface IEmailService
 {
-    Task SendVehicleExitEmailAsync(VehicleExitResponse response);
+    Task SendVehicleExitEmailAsync(
+        VehicleExitResponse response);
 }

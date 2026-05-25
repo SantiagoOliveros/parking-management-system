@@ -1,6 +1,6 @@
-CREATE DATABASE parking_management;
+CREATE DATABASE parking_db;
 
-USE parking_management;
+USE parking_db;
 
 CREATE TABLE VehicleRecords (
     Id INT AUTO_INCREMENT PRIMARY KEY,
