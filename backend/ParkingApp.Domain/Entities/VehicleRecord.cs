@@ -20,5 +20,5 @@ public class VehicleRecord
 
     public VehicleStatus Status { get; set; }
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow.ToLocalTime();
 }

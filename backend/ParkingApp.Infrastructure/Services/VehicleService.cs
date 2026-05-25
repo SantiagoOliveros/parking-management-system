@@ -66,7 +66,7 @@ public class VehicleService : IVehicleService
 
             VehicleType = request.VehicleType,
 
-            EntryTime = DateTime.UtcNow,
+            EntryTime = DateTime.UtcNow.ToLocalTime(),
 
             Status = VehicleStatus.Active
         };
@@ -147,7 +147,7 @@ public class VehicleService : IVehicleService
             );
         }
 
-        var exitTime = DateTime.UtcNow;
+        var exitTime = DateTime.UtcNow.ToLocalTime();
 
         var totalMinutes =
             (int)Math.Ceiling(
@@ -231,7 +231,7 @@ public class VehicleService : IVehicleService
 
                 (decimal)Math.Ceiling(
 
-                    (DateTime.UtcNow - x.EntryTime)
+                    (DateTime.UtcNow.ToLocalTime() - x.EntryTime)
                     .TotalMinutes
 
                 ) * ParkingConstants.PricePerMinute
