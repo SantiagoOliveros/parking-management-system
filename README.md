@@ -164,6 +164,10 @@ Example body:
 }
 ```
 
+VehicleType values:
+- 1 = Car
+- 2 = Motorcycle
+
 ---
 
 ## Register Vehicle Exit
@@ -201,7 +205,7 @@ GET
 ## Create Database
 
 ```sql
-CREATE DATABASE parking_management;
+CREATE DATABASE parking_db;
 ```
 
 ---
@@ -287,8 +291,23 @@ http://localhost:4200
 
 The external email API integration was successfully implemented using token-based authentication and HTTP requests.
 The API responds successfully (HTTP 200) during vehicle exit processing.
----
 
+External API used:
+
+https://dev-sites.similtech.co/api-email/swagger/index.html
+---
+# Validations and Error Handling
+
+The application includes:
+
+- FluentValidation for request validation
+- Global exception middleware
+- HTTP status code handling
+- Duplicate vehicle prevention
+- Invalid plate format validation
+- Clean API error responses
+
+  
 # Technical Highlights
 
 - Clean Architecture approach
