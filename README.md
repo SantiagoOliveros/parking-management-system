@@ -1,10 +1,7 @@
-# Parking Management System
-
 ## Technical Question – Point 1
 
 Given code:
 
-```csharp
 var list = new[] { 3, -3, 5, 1 };
 var sum = 0;
 
@@ -19,6 +16,9 @@ foreach (var item in list)
 Result
 
 The correct result of the execution is: 10
+
+# Parking Management System
+
 
 Technical test developed for the Semi Senior Developer selection process.
 
