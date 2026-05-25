@@ -285,10 +285,8 @@ http://localhost:4200
 
 # Email API Integration
 
-The project architecture includes support for external email service integration during vehicle exit registration.
-
-The email provider integration was designed to remain isolated from business logic in order to allow easy provider replacement or future integration improvements.
-
+The external email API integration was successfully implemented using token-based authentication and HTTP requests.
+The API responds successfully (HTTP 200) during vehicle exit processing.
 ---
 
 # Technical Highlights
