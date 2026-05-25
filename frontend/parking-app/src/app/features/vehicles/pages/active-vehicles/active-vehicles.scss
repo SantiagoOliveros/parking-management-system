@@ -1,0 +1,24 @@
+.vehicles-table {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.empty-state {
+  margin-top: 2rem;
+  font-size: 1.1rem;
+  color: #757575;
+}
+
+mat-chip {
+  font-weight: 600;
+}
+
+button {
+  min-width: 140px;
+}

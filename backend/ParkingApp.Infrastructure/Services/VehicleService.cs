@@ -1,0 +1,124 @@
+using Microsoft.EntityFrameworkCore;
+using ParkingApp.Application.DTOs.Vehicle;
+using ParkingApp.Application.Interfaces;
+using ParkingApp.Domain.Common;
+using ParkingApp.Domain.Entities;
+using ParkingApp.Domain.Enums;
+using ParkingApp.Infrastructure.Persistence;
+
+namespace ParkingApp.Infrastructure.Services;
+
+public class VehicleService : IVehicleService
+{
+    private readonly ApplicationDbContext _context;
+    private readonly IEmailService _emailService;
+
+    private const decimal PRICE_PER_MINUTE = 50;
+
+    public VehicleService(
+        ApplicationDbContext context,
+        IEmailService emailService)
+    {
+        _context = context;
+        _emailService = emailService;
+    }
+
+    public async Task<VehicleEntryResponse> RegisterEntryAsync(CreateVehicleEntryRequest request)
+    {
+        var normalizedPlate = request.Plate.Trim().ToUpper();
+
+        var exists = await _context.VehicleRecords.AnyAsync(x =>
+            x.Plate == normalizedPlate &&
+            x.Status == VehicleStatus.Active);
+
+        if (exists)
+        {
+            throw new BadRequestException("Vehicle already exists in parking lot");
+        }
+
+        var vehicle = new VehicleRecord
+        {
+            Plate = normalizedPlate,
+            VehicleType = request.VehicleType,
+            EntryTime = DateTime.UtcNow,
+            Status = VehicleStatus.Active
+        };
+
+        _context.VehicleRecords.Add(vehicle);
+
+        await _context.SaveChangesAsync();
+
+        return new VehicleEntryResponse
+        {
+            Id = vehicle.Id,
+            Plate = vehicle.Plate,
+            VehicleType = vehicle.VehicleType.ToString(),
+            EntryTime = vehicle.EntryTime
+        };
+    }
+
+    public async Task<List<ActiveVehicleResponse>> GetActiveVehiclesAsync()
+    {
+        return await _context.VehicleRecords
+            .Where(x => x.Status == VehicleStatus.Active)
+            .OrderBy(x => x.EntryTime)
+            .Select(x => new ActiveVehicleResponse
+            {
+                Id = x.Id,
+                Plate = x.Plate,
+                VehicleType = x.VehicleType.ToString(),
+                EntryTime = x.EntryTime
+            })
+            .ToListAsync();
+    }
+
+    public async Task<VehicleExitResponse> RegisterExitAsync(string plate)
+    {
+        var normalizedPlate = plate.Trim().ToUpper();
+
+        var vehicle = await _context.VehicleRecords
+            .FirstOrDefaultAsync(x =>
+                x.Plate == normalizedPlate &&
+                x.Status == VehicleStatus.Active);
+
+        if (vehicle is null)
+        {
+            throw new NotFoundException("Vehicle not found");
+        }
+
+        var exitTime = DateTime.UtcNow;
+
+        var totalMinutes = (int)Math.Ceiling(
+            (exitTime - vehicle.EntryTime).TotalMinutes);
+
+        var totalAmount = totalMinutes * PRICE_PER_MINUTE;
+
+        vehicle.ExitTime = exitTime;
+        vehicle.TotalMinutes = totalMinutes;
+        vehicle.TotalAmount = totalAmount;
+        vehicle.Status = VehicleStatus.Completed;
+
+        await _context.SaveChangesAsync();
+
+        var response = new VehicleExitResponse
+        {
+            Plate = vehicle.Plate,
+            VehicleType = vehicle.VehicleType.ToString(),
+            EntryTime = vehicle.EntryTime,
+            ExitTime = exitTime,
+            TotalMinutes = totalMinutes,
+            TotalAmount = totalAmount
+        };
+
+        try
+        {
+            await _emailService.SendVehicleExitEmailAsync(response);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Email sending failed: {ex.Message}");
+        }
+
+        return response;
+    }
+}

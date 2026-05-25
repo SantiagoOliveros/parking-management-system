@@ -1,0 +1,84 @@
+<h2>Register Vehicle Exit</h2>
+
+<form
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+  class="exit-form">
+
+  <div>
+
+    <label>Plate</label>
+
+    <input
+      type="text"
+      formControlName="plate"
+      placeholder="ABC123" />
+
+  </div>
+
+  <div
+    class="validation-error"
+    *ngIf="
+      form.get('plate')?.invalid &&
+      form.get('plate')?.touched
+    ">
+
+    Plate is required
+
+  </div>
+
+  <button
+    type="submit"
+    [disabled]="loading || form.invalid">
+
+    {{ loading ? 'Processing...' : 'Register Exit' }}
+
+  </button>
+
+</form>
+
+<div
+  *ngIf="errorMessage"
+  class="error-message">
+
+  {{ errorMessage }}
+
+</div>
+
+<div
+  *ngIf="exitResult"
+  class="summary-card">
+
+  <h3>Exit Summary</h3>
+
+  <div class="summary-item">
+    <strong>Plate:</strong>
+    {{ exitResult.plate }}
+  </div>
+
+  <div class="summary-item">
+    <strong>Vehicle Type:</strong>
+    {{ exitResult.vehicleType }}
+  </div>
+
+  <div class="summary-item">
+    <strong>Entry Time:</strong>
+    {{ exitResult.entryTime }}
+  </div>
+
+  <div class="summary-item">
+    <strong>Exit Time:</strong>
+    {{ exitResult.exitTime }}
+  </div>
+
+  <div class="summary-item">
+    <strong>Total Minutes:</strong>
+    {{ exitResult.totalMinutes }}
+  </div>
+
+  <div class="summary-item total">
+    <strong>Total Amount:</strong>
+    ${{ exitResult.totalAmount }}
+  </div>
+
+</div>

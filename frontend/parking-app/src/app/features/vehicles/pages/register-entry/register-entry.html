@@ -1,0 +1,34 @@
+<h2>Register Vehicle Entry</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+
+  <div>
+    <label>Plate</label>
+    <input type="text" formControlName="plate" placeholder="ABC123" />
+  </div>
+
+  <div *ngIf="form.get('plate')?.invalid && form.get('plate')?.touched">
+    Plate is required (min 5 characters)
+  </div>
+
+  <div>
+    <label>Vehicle Type</label>
+    <select formControlName="vehicleType">
+      <option [ngValue]="1">Car</option>
+      <option [ngValue]="2">Motorcycle</option>
+    </select>
+  </div>
+
+  <button type="submit" [disabled]="loading || form.invalid">
+    {{ loading ? 'Saving...' : 'Register Entry' }}
+  </button>
+
+</form>
+
+<p style="color: green" *ngIf="successMessage">
+  {{ successMessage }}
+</p>
+
+<p style="color: red" *ngIf="errorMessage">
+  {{ errorMessage }}
+</p>
