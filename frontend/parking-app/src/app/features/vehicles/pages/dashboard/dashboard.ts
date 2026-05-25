@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { VehicleService } from '../../../../services/vehicle.service';
 
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -29,6 +30,7 @@ export class Dashboard implements OnInit {
   private vehicleService = inject(VehicleService);
 
   private cdr = inject(ChangeDetectorRef);
+
 
   stats: any = {
     totalActiveVehicles: 0,

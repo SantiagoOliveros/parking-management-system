@@ -6,6 +6,8 @@ using ParkingApp.Domain.Entities;
 using ParkingApp.Domain.Enums;
 using ParkingApp.Infrastructure.Persistence;
 using ParkingApp.Application.DTOs.Dashboard;
+using ParkingApp.Domain.Constants;
+using ParkingApp.Domain.Helpers;
 
 namespace ParkingApp.Infrastructure.Services;
 
@@ -14,7 +16,7 @@ public class VehicleService : IVehicleService
     private readonly ApplicationDbContext _context;
     private readonly IEmailService _emailService;
 
-    private const decimal PRICE_PER_MINUTE = 50;
+    //private const decimal PRICE_PER_MINUTE = 50;
 
     public VehicleService(
         ApplicationDbContext context,
@@ -27,6 +29,13 @@ public class VehicleService : IVehicleService
     public async Task<VehicleEntryResponse> RegisterEntryAsync(CreateVehicleEntryRequest request)
     {
         var normalizedPlate = request.Plate.Trim().ToUpper();
+
+        if (!PlateHelper.IsValid(request.Plate))
+        {
+            throw new BadRequestException(
+                "Invalid plate format"
+            );
+        }
 
         var exists = await _context.VehicleRecords.AnyAsync(x =>
             x.Plate == normalizedPlate &&
@@ -77,6 +86,13 @@ public class VehicleService : IVehicleService
     {
         var normalizedPlate = plate.Trim().ToUpper();
 
+        if (!PlateHelper.IsValid(plate))
+        {
+            throw new BadRequestException(
+                "Invalid plate format"
+            );
+        }
+
         var vehicle = await _context.VehicleRecords
             .FirstOrDefaultAsync(x =>
                 x.Plate == normalizedPlate &&
@@ -92,7 +108,7 @@ public class VehicleService : IVehicleService
         var totalMinutes = (int)Math.Ceiling(
             (exitTime - vehicle.EntryTime).TotalMinutes);
 
-        var totalAmount = totalMinutes * PRICE_PER_MINUTE;
+        var totalAmount = totalMinutes * ParkingConstants.PricePerMinute;
 
         vehicle.ExitTime = exitTime;
         vehicle.TotalMinutes = totalMinutes;
@@ -139,7 +155,7 @@ public class VehicleService : IVehicleService
             .Sum(x =>
                 (decimal)Math.Ceiling(
                     (DateTime.UtcNow - x.EntryTime).TotalMinutes
-                ) * PRICE_PER_MINUTE
+                ) * ParkingConstants.PricePerMinute
             );
 
         return new DashboardStatsResponse
