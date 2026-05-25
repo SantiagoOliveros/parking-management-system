@@ -1,5 +1,25 @@
 # Parking Management System
 
+## Technical Question – Point 1
+
+Given code:
+
+```csharp
+var list = new[] { 3, -3, 5, 1 };
+var sum = 0;
+
+foreach (var item in list)
+{
+    if (item >= 3)
+        sum = sum + item;
+    else
+        sum -= item;
+}
+
+Result
+
+The correct result of the execution is: 10
+
 Technical test developed for the Semi Senior Developer selection process.
 
 ---
